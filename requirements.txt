@@ -3,7 +3,5 @@ numpy
 matplotlib
 seaborn
 nltk
-re
 string
 scikit-learn
-pickle
