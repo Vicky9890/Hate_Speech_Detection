@@ -10,63 +10,109 @@ from sklearn.tree import DecisionTreeClassifier
 
 nltk.download('stopwords')
 
+
 cleandata = pickle.load(open("clean_data.pkl", "rb"))
 tweetdata = pickle.load(open("dataset.pkl", "rb"))
 
-st.header("Hate Speech Detection")
 
-select = st.text_input("Enter any sentence:")
+st.set_page_config(
+    page_title="Hate Speech Detector",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
+
+st.markdown("""
+    <style>
+        .main {
+            background-color: rgb(137, 137, 137);
+        }
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            color: rgb(89, 0, 255);
+            font-weight: bold;
+            margin-bottom: 0.2em;
+        }
+        .subtitle {
+            text-align: center;
+            color: rgb(255, 255, 255);
+            font-size: 1.1em;
+            margin-bottom: 2em;
+        }
+        div.stButton > button:first-child {
+            display: block;
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+        
+        .result-box {
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .hate {
+            background-color: #d90429;
+        }
+        .offensive {
+            background-color: #ffba08;
+            color: black;
+        }
+        .not-hate {
+            background-color: #06d6a0;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+st.markdown("<div class='title'>Hate Speech Detection</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Identify whether a text contains hate speech, offensive language or is Normal.</div>", unsafe_allow_html=True)
+
+
+select = st.text_area("✍️ Enter a sentence or paragraph below:", height=120, placeholder="Type something like: 'I love everyone equally!'")
+
 
 def cleaning(text):
     text = str(text).lower()
     text = re.sub("https?://\S+|www\.\S+", "", text)
     text = re.sub("\[.*?\]", "", text)
     text = re.sub("<.*?>", "", text)
-    text = re.sub("[%s]" %re.escape(string.punctuation), "", text)
+    text = re.sub("[%s]" % re.escape(string.punctuation), "", text)
     text = re.sub("\n", "", text)
     text = re.sub("\w*\d\w*", "", text)
     text = re.sub("rt", "", text)
 
-    # stopwords processing
     stopword = set(stopwords.words("english"))
-    text = [word for word in text.split(" ") if word not in stopword]
-    text = " ".join(text)
+    text = " ".join([word for word in text.split() if word not in stopword])
 
-    # stemming processing
     stemming = nltk.SnowballStemmer("english")
-    text = [stemming.stem(word) for word in text.split(" ")]
-    text = " ".join(text)
-    
+    text = " ".join([stemming.stem(word) for word in text.split()])
+
     return text
 
-cv=CountVectorizer()
-dt=DecisionTreeClassifier()
+
+cv = CountVectorizer()
+dt = DecisionTreeClassifier()
 
 X = cv.fit_transform(cleandata)
-
 dt.fit(X, tweetdata)
 
 
-
-if st.button("Submit"):
-    clean_text = cleaning(select)
-    transformed_text = cv.transform([clean_text]).toarray()
-    pred = dt.predict(transformed_text)
-    
-    str_name = ' '.join(pred)
-    
-    result =[]
-    if pred == "Hate Speech":
-        result = "Hate Speech"
-        st.image("https://cdn.shortpixel.ai/spai/w_700+q_glossy+ret_img+to_auto/www.article19.org/wp-content/uploads/2017/11/Hate_speech_web_image.jpg")
-    elif pred == "Offensive Language":
-        result = "Offensive Language"  
-        st.image("https://cdn.vectorstock.com/i/preview-1x/08/74/offensive-language-rubber-stamp-vector-12760874.jpg")
+if st.button("🚀 Analyze Text"):
+    if not select.strip():
+        st.warning("⚠️ Please enter a sentence first.")
     else:
-        result = "Not Hate Speech"
-        st.image("https://www.coe.int/documents/12280688/19280137/No-Hate-Speech-Movement_350x150px.png/478b0276-092d-4cf9-9600-a676814837ac?t=1465219125000")
-               
-        
-        
-    st.write("Prediction:", result)    
-        
+        clean_text = cleaning(select)
+        transformed_text = cv.transform([clean_text]).toarray()
+        pred = dt.predict(transformed_text)[0]  # get string value
+
+        if pred == "Hate Speech":
+            st.markdown("<div class='result-box hate'>🚫 Hate Speech Detected</div>", unsafe_allow_html=True)
+        elif pred == "Offensive Language":
+            st.markdown("<div class='result-box offensive'>⚠️ Offensive Language</div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div class='result-box not-hate'>✅ Not Hate Speech</div>", unsafe_allow_html=True)
