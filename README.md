@@ -11,6 +11,9 @@ The app allows users to input any text, which is then cleaned, processed, and cl
 
 It includes a visually appealing **Streamlit interface** with color-coded results for easy interpretation.
 
+🔗 **Want to try it out? Visit the live app here:**  
+👉 [https://hatespeechdetection-vikash.streamlit.app](https://hatespeechdetection-vikash.streamlit.app/)  
+
 ---
 
 ## 🧩 Features
