@@ -70,10 +70,10 @@ st.markdown("""
 
 
 st.markdown("<div class='title'>Hate Speech Detection</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Identify whether a text contains hate speech, offensive language or is Normal.</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Identify whether a text contains hate speech, offensive language or Normal.</div>", unsafe_allow_html=True)
 
 
-select = st.text_area("✍️ Enter a sentence or paragraph below:", height=120, placeholder="Type something like: 'I love everyone equally!'")
+select = st.text_area("Enter a sentence or paragraph below:", height=120, placeholder="Type something like: 'I love everyone equally!'")
 
 
 def cleaning(text):
@@ -102,17 +102,17 @@ X = cv.fit_transform(cleandata)
 dt.fit(X, tweetdata)
 
 
-if st.button("🚀 Analyze Text"):
+if st.button("Analyze Text"):
     if not select.strip():
-        st.warning("⚠️ Please enter a sentence first.")
+        st.warning(" Please enter a sentence first.")
     else:
         clean_text = cleaning(select)
         transformed_text = cv.transform([clean_text]).toarray()
         pred = dt.predict(transformed_text)[0]  # get string value
 
         if pred == "Hate Speech":
-            st.markdown("<div class='result-box hate'>🚫 Hate Speech Detected</div>", unsafe_allow_html=True)
+            st.markdown("<div class='result-box hate'> Hate Speech Detected</div>", unsafe_allow_html=True)
         elif pred == "Offensive Language":
-            st.markdown("<div class='result-box offensive'>⚠️ Offensive Language</div>", unsafe_allow_html=True)
+            st.markdown("<div class='result-box offensive'> Offensive Language</div>", unsafe_allow_html=True)
         else:
-            st.markdown("<div class='result-box not-hate'>✅ Not Hate Speech</div>", unsafe_allow_html=True)
+            st.markdown("<div class='result-box not-hate'> Not Hate Speech</div>", unsafe_allow_html=True)
