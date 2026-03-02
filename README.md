@@ -28,8 +28,8 @@ It includes a visually appealing **Streamlit interface** with color-coded result
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/hate-speech-detection.git
-cd hate-speech-detection
+git clone https://github.com/Vicky9890/Hate_Speech_Detection.git
+cd Hate_Speech_Detection
 ```
 
 ### 2. Create a virtual environment (recommended)
